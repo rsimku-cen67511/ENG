@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zkoušení slovíček z angličtiny</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --primary: #2f6fed;
+        --primary-dark: #1d4fc0;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --success: #16a34a;
+        --danger: #dc2626;
+        --border: #dfe7f2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #ff6b6b 0%, #b91c1c 100%);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .card {
+        width: min(700px, 100%);
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(31, 41, 55, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 30px 24px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        text-align: center;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+      }
+
+      .subtitle {
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+
+      .word-box {
+        background: #f8fbff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .label {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .word {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .answer-area {
+        margin: 14px 0 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 1.1rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+
+      input:focus {
+        border-color: var(--primary);
+      }
+
+      .buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .secondary {
+        background: #e5ecff;
+        color: var(--text);
+      }
+
+      .result {
+        min-height: 32px;
+        margin-top: 18px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+
+      .success {
+        color: var(--success);
+      }
+
+      .danger {
+        color: var(--danger);
+      }
+
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Anglická slovíčka</h1>
+      <p class="subtitle">Zkoušení slovíček – napiš český překlad</p>
+
+      <div class="word-box">
+        <span class="label">Slovo</span>
+        <p id="word" class="word">apple</p>
+      </div>
+
+      <div class="answer-area">
+        <input id="answer" type="text" placeholder="Napiš překlad..." autocomplete="off" />
+      </div>
+
+      <div class="buttons">
+        <button class="primary" id="checkBtn">Zkontrolovat</button>
+        <button class="secondary" id="nextBtn">Další slovo</button>
+      </div>
+
+      <div id="result" class="result" aria-live="polite"></div>
+
+      <div class="stats">
+        <span>Správně: <strong id="correctCount">0</strong></span>
+        <span>Špatně: <strong id="wrongCount">0</strong></span>
+        <span>Celkem: <strong id="totalCount">0</strong></span>
+      </div>
+    </div>
+
+    <script>
+      const words = [
+        { en: 'apple', cs: 'jablko' },
+        { en: 'book', cs: 'kniha' },
+        { en: 'house', cs: 'dům' },
+        { en: 'school', cs: 'škola' },
+        { en: 'cat', cs: 'kočka' },
+        { en: 'dog', cs: 'pes' },
+        { en: 'water', cs: 'voda' },
+        { en: 'tree', cs: 'strom' },
+        { en: 'sun', cs: 'slunce' },
+        { en: 'friend', cs: 'přítel' },
+        { en: 'window', cs: 'okno' },
+        { en: 'table', cs: 'stůl' },
+        { en: 'chair', cs: 'židle' },
+        { en: 'music', cs: 'hudba' },
+        { en: 'computer', cs: 'počítač' },
+        { en: 'language', cs: 'jazyk' },
+        { en: 'travel', cs: 'cestování' },
+        { en: 'rain', cs: 'déšť' },
+        { en: 'family', cs: 'rodina' },
+        { en: 'teacher', cs: 'učitel' }
+      ];
+
+      let currentWord = null;
+      let correctCount = 0;
+      let wrongCount = 0;
+      let totalCount = 0;
+
+      const wordEl = document.getElementById('word');
+      const answerEl = document.getElementById('answer');
+      const resultEl = document.getElementById('result');
+      const correctCountEl = document.getElementById('correctCount');
+      const wrongCountEl = document.getElementById('wrongCount');
+      const totalCountEl = document.getElementById('totalCount');
+
+      function randomWord() {
+        const randomIndex = Math.floor(Math.random() * words.length);
+        currentWord = words[randomIndex];
+        wordEl.textContent = currentWord.en;
+        answerEl.value = '';
+        answerEl.focus();
+        resultEl.textContent = '';
+        resultEl.className = 'result';
+      }
+
+      function updateStats() {
+        correctCountEl.textContent = correctCount;
+        wrongCountEl.textContent = wrongCount;
+        totalCountEl.textContent = totalCount;
+      }
+
+      function checkAnswer() {
+        if (!currentWord) return;
+
+        const userAnswer = answerEl.value.trim().toLowerCase();
+        const correctAnswer = currentWord.cs.toLowerCase();
+
+        totalCount += 1;
+
+        if (userAnswer === correctAnswer) {
+          correctCount += 1;
+          resultEl.textContent = 'Správně! ' + currentWord.en + ' = ' + currentWord.cs;
+          resultEl.className = 'result success';
+        } else {
+          wrongCount += 1;
+          resultEl.textContent = 'Špatně. Správná odpověď je: ' + currentWord.cs;
+          resultEl.className = 'result danger';
+        }
+
+        updateStats();
+        setTimeout(randomWord, 1200);
+      }
+
+      document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        randomWord();
+      });
+
+      answerEl.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          checkAnswer();
+        }
+      });
+
+      randomWord();
+    </script>
+  </body>
+</html>
